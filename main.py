@@ -19,7 +19,8 @@ class Tetris:
         self.lbl_level_game = Label(self.canvas, text="Level")
 
 
-
+        self.current_piece = []
+        self.all_pieces = []
         self.board = [] # to paint a game 
         self.initBoard()
         self.miniBoard = [] # To Paint next piece
@@ -53,6 +54,8 @@ class Tetris:
         self.paintBaord()
         self.paintMiniBoard()
         self.updateScore()
+        self.updateLevel()
+        self.updateSpeed()
         self.screem.after(30, self.refreshScreem)
 
     def initBoard(self):
@@ -69,8 +72,61 @@ class Tetris:
             for _ in range(0, 4):
                 self.miniBoard[i].append(0)
 
+    def initPieces(self):
+        """
+        1111
+        """
+        p1a = [1,1,1,1]
+        p1b = [[1],[1],[1],[1]]
+        pieceA = [p1a, p1b]
+        self.all_pieces.append(pieceA)
+
+        p2a = [[1,0,0],[1,1,1]]
+        p2b = [[1,1],[1,0],[1,0]]
+        p2c = [[1,1,1],[0,0,1]]
+        p2d = [[0,1],[0,1],[1,1]]
+        pieceB = [p2a, p2b, p2c, p2d]
+        self.all_pieces.append(pieceB)
+
+        p3a = [[0,0,1],[1,1,1]]
+        p3b = [[1,0],[1,0],[1,1]]
+        p3c = [[1,1,1],[1,0,0]]
+        p3d = [[1,1],[0,1],[0,1]]
+        pieceC = [p3a, p3b, p3c, p3d]
+        self.all_pieces.append(pieceC)
+
+        p4a = [[1,1],[1,1]]
+        pieceD = [p4a]
+        self.all_pieces.append(pieceD)
+
+        p5a = [[0,1,1],[1,1,0]]
+        p5b = [[1,0],[1,1],[0,1]]
+        pieceE = [p5a, p5b]
+        self.all_pieces.append(pieceE)
+
+        p6a = [[0,1,0],[1,1,1]]
+        p6b = [[1,0],[1,1],[1,0]]
+        p6c = [[1,1,1],[0,1,0]]
+        p6d = [[0,1],[1,1],[0,1]]
+        pieceF = [p6a, p6b, p6c, p6d]
+        self.all_pieces.append(pieceF)
+
+        p7a = [[1,1,0],[0,1,1]]
+        p7b = [[1,0],[1,1],[1,0]]
+        pieceG = [p7a, p7b]
+        self.all_pieces.append(pieceG)
+
+
+
+
     def updateScore(self):
         self.lbl_player_score['text'] = "HighScore:\n"+str(self.player_score)
+
+    def updateLevel(self):
+        self.lbl_level_game['text'] = "Level:\n"+str(self.level)
+
+    def updateSpeed(self):
+        self.lbl_seed_game['text'] = "Speed:\n"+str(self.speed)
 
 
     def paintBaord(self):
@@ -92,7 +148,7 @@ class Tetris:
     def paintMiniBoard(self):
         countx = 0
         county = 0
-
+        self.canvas.delete("miniboard")
         for i in self.miniBoard:
             countx = 0
             county = county + 1
