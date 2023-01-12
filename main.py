@@ -98,35 +98,35 @@ class Tetris:
         p2c = [[1,1,1],[0,0,1]]
         p2d = [[0,1],[0,1],[1,1]]
         pieceB = [p2a, p2b, p2c, p2d]
-        self.all_pieces.append(pieceB)
+        #self.all_pieces.append(pieceB)
 
         p3a = [[0,0,1],[1,1,1]]
         p3b = [[1,0],[1,0],[1,1]]
         p3c = [[1,1,1],[1,0,0]]
         p3d = [[1,1],[0,1],[0,1]]
         pieceC = [p3a, p3b, p3c, p3d]
-        self.all_pieces.append(pieceC)
+        #self.all_pieces.append(pieceC)
 
         p4a = [[1,1],[1,1]]
         pieceD = [p4a]
-        self.all_pieces.append(pieceD)
+        #self.all_pieces.append(pieceD)
 
         p5a = [[0,1,1],[1,1,0]]
         p5b = [[1,0],[1,1],[0,1]]
         pieceE = [p5a, p5b]
-        self.all_pieces.append(pieceE)
+        #self.all_pieces.append(pieceE)
 
         p6a = [[0,1,0],[1,1,1]]
         p6b = [[1,0],[1,1],[1,0]]
         p6c = [[1,1,1],[0,1,0]]
         p6d = [[0,1],[1,1],[0,1]]
         pieceF = [p6a, p6b, p6c, p6d]
-        self.all_pieces.append(pieceF)
+        #self.all_pieces.append(pieceF)
 
         p7a = [[1,1,0],[0,1,1]]
         p7b = [[1,0],[1,1],[0,1]]
         pieceG = [p7a, p7b]
-        self.all_pieces.append(pieceG)
+        #self.all_pieces.append(pieceG)
 
 
     def getNewRandomPiece(self):
@@ -147,23 +147,28 @@ class Tetris:
     def rotatePieceR(self):
         # Add logic to rotate R and mouve r ****
         total_rotations = len(self.current_piece)
-        print("Pieza total actual: ", self.current_piece)
-        print("Horientacion actual:", self.getPieceRotation())
-        print("Total piezas: ", total_rotations)
-        print("Rotando R...")
+        #print("Pieza total actual: ", self.current_piece)
+        #print("Horientacion actual:", self.getPieceRotation())
+        #print("Total piezas: ", total_rotations)
+        #print("Rotando R...")
         self.current_piece_rotation = (self.current_piece_rotation + 1) %  total_rotations
-        print("Rotada a: ", self.getPieceRotation())
+        #print("Rotada a: ", self.getPieceRotation())
 
 
     def rotatePieceL(self):
         pass
 
+    def restartCurrentPiece(self):
+        self.current_piece_pos_x = 4
+        self.current_piece_pos_y = 0
+        self.current_piece = []
+
 
     def putCurrentPieceInScreem(self):
         height_current_piece = len(self.current_piece[self.getPieceRotation()])
-        print("==============")
-        print("Pieza: ", self.current_piece[self.getPieceRotation()])
-        print("Total manaño: ", height_current_piece)
+        #print("==============")
+        #print("Pieza: ", self.current_piece[self.getPieceRotation()])
+        #print("Total manaño: ", height_current_piece)
 
         # Don´t Exist pices
         #if height_current_piece == 1:
@@ -192,6 +197,7 @@ class Tetris:
                 _y = _y + 1
 
         if height_current_piece == 4:
+            print("Estoy acaaaaaaa")
             if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
                 print("****")
                 # Hable to paint=
@@ -228,18 +234,27 @@ class Tetris:
     def applyGravity(self):
         if self.canMouveDown():
             self.current_piece_pos_y = self.current_piece_pos_y + 1
-        else:
-            print("The piece touch floor?")
 
 
     def canMouveDown(self):
-        len_pice = len(self.current_piece[self.getPieceRotation()])
-        return self.current_piece_pos_y + len_pice < len(self.board)
+        if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+            return self.current_piece_pos_y + 1 <  len(self.board)
+        else:
+            len_pice = len(self.current_piece[self.getPieceRotation()])
+            return self.current_piece_pos_y + len_pice < len(self.board)
 
 
     def thePieceTouchFloor(self):
-        pass
+        # Put the case ****
+        if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+            return self.current_piece_pos_y == len(self.board)
+        else:
+            len_pice = len(self.current_piece[self.getPieceRotation()])
+        return self.current_piece_pos_y + len_pice == len(self.board)
 
+    def putThePieceInFloor(self):
+        # Put the cases 
+        pass
 
     def mouvePieceR(self):
         if self.canMouveR():
@@ -294,7 +309,7 @@ class Tetris:
                 y0 = 50
                 if j == 0:
                     self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="snow", tag="board")
-                else:
+                if j == 1 or j == 2:
                     self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="black", tag="board")
                 countx = countx + 1
 
@@ -378,6 +393,9 @@ class Tetris:
                 time.sleep(0.25)
                 self.eraseCurrentPiece()
                 self.applyGravity()
+                if self.thePieceTouchFloor():
+                    self.putThePieceInFloor()
+                    self.restartCurrentPiece()
 
 
             time.sleep(0.1)
