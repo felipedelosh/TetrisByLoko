@@ -27,6 +27,8 @@ class Tetris:
 
 
         self.current_piece = []
+        self.current_piece_pos_x = 4
+        self.current_piece_pos_y = 0
         self.current_piece_rotation = 0
         self.all_pieces = []
         self.initPieces()
@@ -61,7 +63,7 @@ class Tetris:
 
 
     def refreshScreem(self):
-        #self.paintBaord()
+        self.paintBaord()
         self.paintMiniBoard()
         self.updateScore()
         self.updateLevel()
@@ -130,12 +132,69 @@ class Tetris:
         """
         Setting a new Random piece
         """
+        self.current_piece_rotation = 0
         k = random.randint(0, len(self.all_pieces)-1)
         self.current_piece = self.all_pieces[k]
 
     def getPieceRotation(self):
-        return 0
+        return self.current_piece_rotation
 
+    def rotatePieceR(self):
+        total_rotations = len(self.current_piece)
+        print("Pieza total actual: ", self.current_piece)
+        print("Horientacion actual:", self.getPieceRotation())
+        print("Total piezas: ", total_rotations)
+        print("Rotando R...")
+        self.current_piece_rotation = (self.current_piece_rotation + 1) %  total_rotations
+        print("Rotada a: ", self.getPieceRotation())
+
+
+    def rotatePieceL(self):
+        pass
+
+    def putCurrentPieceInScreem(self):
+        height_current_piece = len(self.current_piece[self.getPieceRotation()])
+        print("==============")
+        print("Pieza: ", self.current_piece[self.getPieceRotation()])
+        print("Total manaño: ", height_current_piece)
+
+        if height_current_piece == 1:
+            print("Tipo 1")
+
+        if height_current_piece == 2:
+            _x = self.current_piece_pos_x
+            _y = self.current_piece_pos_y
+            for i in self.current_piece[self.getPieceRotation()]:
+                _x = self.current_piece_pos_x
+                for j in i:
+                    self.board[_y][_x] = j
+                    _x = _x + 1
+                _y = _y + 1
+
+        if height_current_piece == 3:
+            print("Tipo 3")
+
+        if height_current_piece == 4:
+            if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+                print("****")
+                # Hable to paint=
+                _x = self.current_piece_pos_x
+                _y = self.current_piece_pos_y
+                for i in self.current_piece[self.getPieceRotation()]:
+                    self.board[_y][_x] = i
+                    _x = _x + 1
+            else:
+                print("*\n*\n*\n*\n*")
+                # hable To Paint?
+
+                _x = self.current_piece_pos_x
+                _y = self.current_piece_pos_y
+                for i in self.current_piece[self.getPieceRotation()]:
+                    self.board[_y][_x] = i
+                    _y = _y + 1
+
+    def eraseCurrentPiece(self):
+        pass
 
 
     def updateScore(self):
@@ -215,23 +274,23 @@ class Tetris:
         if Event.keysym == "Up":
             print("Up")
         if Event.keysym == "Down":
-            pass
+            print("Down")
         if Event.keysym == "Right":
-            pass
+            print("Mouve R")
         if Event.keysym == "Left":
-            pass
+            print("Mouve L")
 
         if Event.keysym == "space":
-            pass
-        
+            if self.mode_game == 1:
+                self.rotatePieceR()
+
         if Event.keysym == "r":
             self.getNewRandomPiece()
-
 
         if self.mode_game == 0:
                 self.mode_game = 1
 
-        print(Event.keysym)
+        #print(Event.keysym)
 
 
     def run(self):
@@ -240,10 +299,18 @@ class Tetris:
                 self.showInitalAnimation()
 
             if self.mode_game == 1:
-                # Get Random piece
+                # Get rnd piece if not use
                 if self.current_piece == []:
-                    pass
+                    self.getNewRandomPiece()
+                # Put Pïece in Screem
+                self.putCurrentPieceInScreem()
+                time.sleep(0.1)
+                self.eraseCurrentPiece()
 
+
+
+            time.sleep(0.1)
+            
             
 
 
