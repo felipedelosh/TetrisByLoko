@@ -27,7 +27,7 @@ class Tetris:
 
 
         self.current_piece = []
-        self.current_piece_pos_x = 4
+        self.current_piece_pos_x = 3
         self.current_piece_pos_y = 0
         self.current_piece_rotation = 0
         self.all_pieces = []
@@ -124,7 +124,7 @@ class Tetris:
         self.all_pieces.append(pieceF)
 
         p7a = [[1,1,0],[0,1,1]]
-        p7b = [[1,0],[1,1],[1,0]]
+        p7b = [[1,0],[1,1],[0,1]]
         pieceG = [p7a, p7b]
         self.all_pieces.append(pieceG)
 
@@ -135,7 +135,9 @@ class Tetris:
         self.current_piece_rotation = 0
         k = random.randint(0, len(self.all_pieces)-1)
         self.current_piece = self.all_pieces[k]
-
+        
+        
+    
     def getPieceRotation(self):
         return self.current_piece_rotation
 
@@ -158,10 +160,12 @@ class Tetris:
         print("Pieza: ", self.current_piece[self.getPieceRotation()])
         print("Total manaño: ", height_current_piece)
 
-        if height_current_piece == 1:
-            print("Tipo 1")
+        # Don´t Exist pices
+        #if height_current_piece == 1:
+        #    print("Tipo 1")
 
         if height_current_piece == 2:
+            print("Tipo 2")
             _x = self.current_piece_pos_x
             _y = self.current_piece_pos_y
             for i in self.current_piece[self.getPieceRotation()]:
@@ -173,6 +177,15 @@ class Tetris:
 
         if height_current_piece == 3:
             print("Tipo 3")
+            _x = self.current_piece_pos_x
+            _y = self.current_piece_pos_y
+            for i in self.current_piece[self.getPieceRotation()]:
+                _x = self.current_piece_pos_x
+                for j in i:
+                    self.board[_y][_x] = j
+                    _x = _x + 1
+                _y = _y + 1
+
 
         if height_current_piece == 4:
             if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
@@ -194,8 +207,24 @@ class Tetris:
                     _y = _y + 1
 
     def eraseCurrentPiece(self):
-        pass
+        count_x = 0
+        count_y = 0
+        for i in self.board:
+            count_x = 0
+            for j in i:
+                if j == 1:
+                    self.board[count_y][count_x] = 0
+                count_x = count_x + 1 
+            count_y = count_y + 1
 
+
+    def applyGravity(self):
+        if self.canMouveDown():
+            self.current_piece_pos_y = self.current_piece_pos_y + 1 
+
+    def canMouveDown(self):
+        len_pice = len(self.current_piece[self.getPieceRotation()])
+        return self.current_piece_pos_y + len_pice < len(self.board)
 
     def updateScore(self):
         self.lbl_player_score['text'] = "HighScore:\n"+str(self.player_score)
@@ -304,8 +333,9 @@ class Tetris:
                     self.getNewRandomPiece()
                 # Put Pïece in Screem
                 self.putCurrentPieceInScreem()
-                time.sleep(0.1)
+                time.sleep(0.25)
                 self.eraseCurrentPiece()
+                self.applyGravity()
 
 
 
