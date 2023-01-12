@@ -4,10 +4,12 @@ FelipedelosH
 
 """
 
+
 from tkinter import *
 from threading import Thread
 import time
 import random
+
 
 class Tetris:
     def __init__(self) -> None:
@@ -19,12 +21,10 @@ class Tetris:
         self.lbl_player_score = Label(self.canvas, text="High Score")
         self.lbl_seed_game = Label(self.canvas, text="Speed")
         self.lbl_level_game = Label(self.canvas, text="Level")
-        
 
         #This is control game
         # 0: the game not run
         self.mode_game = 0
-
 
         self.current_piece = []
         self.current_piece_pos_x = 3
@@ -40,15 +40,12 @@ class Tetris:
         self.player_score = 0
         self.speed = 1
         self.level = 1
-
         
         self.thread = Thread(target=self.run)
         self.thread.start()
 
         self.showInterface()
     
-
-
 
     def showInterface(self):
         self.screem.title("Tetris By Loko")
@@ -70,6 +67,7 @@ class Tetris:
         self.updateSpeed()
         self.screem.after(60, self.refreshScreem)
 
+
     def initBoard(self):
         self.board = []
         for i in range(0, 18):
@@ -77,12 +75,14 @@ class Tetris:
             for _ in range(0, 10):
                 self.board[i].append(0)
 
+
     def initMiniBoard(self):
         self.miniBoard = []
         for i in range(0, 4):
             self.miniBoard.append([])
             for _ in range(0, 4):
                 self.miniBoard[i].append(0)
+
 
     def initPieces(self):
         """
@@ -128,11 +128,13 @@ class Tetris:
         pieceG = [p7a, p7b]
         self.all_pieces.append(pieceG)
 
+
     def getNewRandomPiece(self):
         """
         Setting a new Random piece
         """
         self.current_piece_rotation = 0
+        self.current_piece_pos_x = 4
         k = random.randint(0, len(self.all_pieces)-1)
         self.current_piece = self.all_pieces[k]
         
@@ -141,7 +143,9 @@ class Tetris:
     def getPieceRotation(self):
         return self.current_piece_rotation
 
+
     def rotatePieceR(self):
+        # Add logic to rotate R and mouve r ****
         total_rotations = len(self.current_piece)
         print("Pieza total actual: ", self.current_piece)
         print("Horientacion actual:", self.getPieceRotation())
@@ -153,6 +157,7 @@ class Tetris:
 
     def rotatePieceL(self):
         pass
+
 
     def putCurrentPieceInScreem(self):
         height_current_piece = len(self.current_piece[self.getPieceRotation()])
@@ -186,7 +191,6 @@ class Tetris:
                     _x = _x + 1
                 _y = _y + 1
 
-
         if height_current_piece == 4:
             if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
                 print("****")
@@ -206,9 +210,12 @@ class Tetris:
                     self.board[_y][_x] = i
                     _y = _y + 1
 
+
     def eraseCurrentPiece(self):
         count_x = 0
         count_y = 0
+        # Put case [[1][1][1][1]]
+        # Put anothers cases
         for i in self.board:
             count_x = 0
             for j in i:
@@ -220,17 +227,49 @@ class Tetris:
 
     def applyGravity(self):
         if self.canMouveDown():
-            self.current_piece_pos_y = self.current_piece_pos_y + 1 
+            self.current_piece_pos_y = self.current_piece_pos_y + 1
+        else:
+            print("The piece touch floor?")
+
 
     def canMouveDown(self):
         len_pice = len(self.current_piece[self.getPieceRotation()])
         return self.current_piece_pos_y + len_pice < len(self.board)
 
+
+    def thePieceTouchFloor(self):
+        pass
+
+
+    def mouvePieceR(self):
+        if self.canMouveR():
+            self.current_piece_pos_x = self.current_piece_pos_x + 1
+
+
+    def canMouveR(self):
+        if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+            len_piece_w = 4
+        else:
+            len_piece_w = len(self.current_piece[self.getPieceRotation()][0])
+        return self.current_piece_pos_x + len_piece_w < len(self.board[0])
+
+
+    def mouvePïeceL(self):
+        if self.canMouvePieceL():
+            self.current_piece_pos_x = self.current_piece_pos_x - 1
+
+
+    def canMouvePieceL(self):
+        return self.current_piece_pos_x - 1 >= 0
+
+
     def updateScore(self):
         self.lbl_player_score['text'] = "HighScore:\n"+str(self.player_score)
 
+
     def updateLevel(self):
         self.lbl_level_game['text'] = "Level:\n"+str(self.level)
+
 
     def updateSpeed(self):
         self.lbl_seed_game['text'] = "Speed:\n"+str(self.speed)
@@ -258,6 +297,7 @@ class Tetris:
                 else:
                     self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="black", tag="board")
                 countx = countx + 1
+
 
     def paintMiniBoard(self):
         if self.current_piece != self.miniBoardCurrentPiece:
@@ -305,9 +345,11 @@ class Tetris:
         if Event.keysym == "Down":
             print("Down")
         if Event.keysym == "Right":
-            print("Mouve R")
+            if self.mode_game == 1:
+                self.mouvePieceR()
         if Event.keysym == "Left":
-            print("Mouve L")
+            if self.mode_game == 1:
+                self.mouvePïeceL()
 
         if Event.keysym == "space":
             if self.mode_game == 1:
@@ -338,10 +380,8 @@ class Tetris:
                 self.applyGravity()
 
 
-
             time.sleep(0.1)
             
             
-
 
 t = Tetris()
