@@ -5,6 +5,7 @@ FelipedelosH
 """
 
 from tkinter import *
+from threading import Thread
 import time
 import random
 
@@ -14,23 +15,33 @@ class Tetris:
         self.canvas = Canvas(self.screem, width=480, height=640, bg="white")
         self.logo = PhotoImage(file="resources\img\logo.gif")
         self.canvas.bind_all("<Key>", self.keyPressed)
+        self.lbl_main_message_start_game = Label(self.canvas, text="¡¡Press Any Key to start Game :) !!")
         self.lbl_player_score = Label(self.canvas, text="High Score")
         self.lbl_seed_game = Label(self.canvas, text="Speed")
         self.lbl_level_game = Label(self.canvas, text="Level")
+        
+
+        #This is control game
+        # 0: the game not run
+        self.mode_game = 0
 
 
         self.current_piece = []
+        self.current_piece_rotation = 0
         self.all_pieces = []
+        self.initPieces()
         self.board = [] # to paint a game 
         self.initBoard()
         self.miniBoard = [] # To Paint next piece
+        self.miniBoardCurrentPiece = []
         self.initMiniBoard()
         self.player_score = 0
         self.speed = 1
         self.level = 1
 
         
-
+        self.thread = Thread(target=self.run)
+        self.thread.start()
 
         self.showInterface()
     
@@ -40,8 +51,7 @@ class Tetris:
     def showInterface(self):
         self.screem.title("Tetris By Loko")
         self.screem.geometry("480x640")
-        self.canvas.place(x=0, y=0)
-        self.paintBaord()
+        self.canvas.place(x=0, y=0) 
         self.lbl_player_score.place(x=360, y=80)
         self.lbl_seed_game.place(x=340, y=320)
         self.lbl_level_game.place(x=420, y=320)
@@ -51,12 +61,12 @@ class Tetris:
 
 
     def refreshScreem(self):
-        self.paintBaord()
+        #self.paintBaord()
         self.paintMiniBoard()
         self.updateScore()
         self.updateLevel()
         self.updateSpeed()
-        self.screem.after(30, self.refreshScreem)
+        self.screem.after(60, self.refreshScreem)
 
     def initBoard(self):
         self.board = []
@@ -116,6 +126,15 @@ class Tetris:
         pieceG = [p7a, p7b]
         self.all_pieces.append(pieceG)
 
+    def getNewRandomPiece(self):
+        """
+        Setting a new Random piece
+        """
+        k = random.randint(0, len(self.all_pieces)-1)
+        self.current_piece = self.all_pieces[k]
+
+    def getPieceRotation(self):
+        return 0
 
 
 
@@ -127,6 +146,13 @@ class Tetris:
 
     def updateSpeed(self):
         self.lbl_seed_game['text'] = "Speed:\n"+str(self.speed)
+
+
+    def showInitalAnimation(self):
+        self.lbl_main_message_start_game.place(x=100, y=300)
+        time.sleep(0.2)
+        self.lbl_main_message_start_game.place_forget()
+        time.sleep(0.2)
 
 
     def paintBaord(self):
@@ -146,18 +172,44 @@ class Tetris:
                 countx = countx + 1
 
     def paintMiniBoard(self):
-        countx = 0
-        county = 0
-        self.canvas.delete("miniboard")
-        for i in self.miniBoard:
+        if self.current_piece != self.miniBoardCurrentPiece:
             countx = 0
-            county = county + 1
-            for j in i:
-                x0 = 360
-                y0 = 200
-                self.canvas.create_rectangle((x0+(countx*15)),(y0+(county*15)),(x0+((countx+1)*15)),(y0+((county+1)*15)), fill="snow", tag="miniboard")
-                countx = countx + 1
-                
+            county = 0
+            self.initMiniBoard()
+            self.canvas.delete("miniboard")
+            self._insertMiniPieceInMiniBoard()
+            for i in self.miniBoard:
+                countx = 0
+                county = county + 1
+                for j in i:
+                    x0 = 360
+                    y0 = 200
+                    if j == 0:
+                        self.canvas.create_rectangle((x0+(countx*15)),(y0+(county*15)),(x0+((countx+1)*15)),(y0+((county+1)*15)), fill="snow", tag="miniboard")
+                    else:
+                        self.canvas.create_rectangle((x0+(countx*15)),(y0+(county*15)),(x0+((countx+1)*15)),(y0+((county+1)*15)), fill="black", tag="miniboard")
+                    countx = countx + 1
+
+
+    def _insertMiniPieceInMiniBoard(self):
+        if self.current_piece[0] == [1,1,1,1]:
+            _x = 0
+            for i in self.current_piece[0]:
+                self.miniBoard[0][_x] = i
+                _x = _x + 1
+        else:
+            _x = 1
+            _y = 0
+            for i in self.current_piece[0]:
+                _x = 1
+                _y = _y + 1
+                for j in i:
+                    self.miniBoard[_y][_x] = j
+                    _x = _x + 1
+
+        self.miniBoardCurrentPiece = self.current_piece.copy()
+
+
 
     def keyPressed(self, Event):
         if Event.keysym == "Up":
@@ -170,8 +222,29 @@ class Tetris:
             pass
 
         if Event.keysym == "space":
-            print("Space")
+            pass
+        
+        if Event.keysym == "r":
+            self.getNewRandomPiece()
+
+
+        if self.mode_game == 0:
+                self.mode_game = 1
 
         print(Event.keysym)
+
+
+    def run(self):
+        while True:
+            if self.mode_game == 0:
+                self.showInitalAnimation()
+
+            if self.mode_game == 1:
+                # Get Random piece
+                if self.current_piece == []:
+                    pass
+
+            
+
 
 t = Tetris()
