@@ -15,6 +15,8 @@ class Tetris:
         self.logo = PhotoImage(file="resources\img\logo.gif")
         self.canvas.bind_all("<Key>", self.keyPressed)
         self.lbl_player_score = Label(self.canvas, text="High Score")
+        self.lbl_seed_game = Label(self.canvas, text="Speed")
+        self.lbl_level_game = Label(self.canvas, text="Level")
 
 
 
@@ -23,6 +25,8 @@ class Tetris:
         self.miniBoard = [] # To Paint next piece
         self.initMiniBoard()
         self.player_score = 0
+        self.speed = 1
+        self.level = 1
 
         
 
@@ -38,13 +42,16 @@ class Tetris:
         self.canvas.place(x=0, y=0)
         self.paintBaord()
         self.lbl_player_score.place(x=360, y=80)
-        self.canvas.create_image(360,500,image=self.logo, anchor=NW)
+        self.lbl_seed_game.place(x=340, y=320)
+        self.lbl_level_game.place(x=420, y=320)
+        self.canvas.create_image(350,500,image=self.logo, anchor=NW)
         self.screem.after(0, self.refreshScreem)
         self.screem.mainloop()
 
 
     def refreshScreem(self):
         self.paintBaord()
+        self.paintMiniBoard()
         self.updateScore()
         self.screem.after(30, self.refreshScreem)
 
@@ -82,7 +89,18 @@ class Tetris:
                     self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="black", tag="board")
                 countx = countx + 1
 
+    def paintMiniBoard(self):
+        countx = 0
+        county = 0
 
+        for i in self.miniBoard:
+            countx = 0
+            county = county + 1
+            for j in i:
+                x0 = 360
+                y0 = 200
+                self.canvas.create_rectangle((x0+(countx*15)),(y0+(county*15)),(x0+((countx+1)*15)),(y0+((county+1)*15)), fill="snow", tag="miniboard")
+                countx = countx + 1
                 
 
     def keyPressed(self, Event):
