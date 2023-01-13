@@ -98,35 +98,35 @@ class Tetris:
         p2c = [[1,1,1],[0,0,1]]
         p2d = [[0,1],[0,1],[1,1]]
         pieceB = [p2a, p2b, p2c, p2d]
-        #self.all_pieces.append(pieceB)
+        self.all_pieces.append(pieceB)
 
         p3a = [[0,0,1],[1,1,1]]
         p3b = [[1,0],[1,0],[1,1]]
         p3c = [[1,1,1],[1,0,0]]
         p3d = [[1,1],[0,1],[0,1]]
         pieceC = [p3a, p3b, p3c, p3d]
-        #self.all_pieces.append(pieceC)
+        self.all_pieces.append(pieceC)
 
         p4a = [[1,1],[1,1]]
         pieceD = [p4a]
-        #self.all_pieces.append(pieceD)
+        self.all_pieces.append(pieceD)
 
         p5a = [[0,1,1],[1,1,0]]
         p5b = [[1,0],[1,1],[0,1]]
         pieceE = [p5a, p5b]
-        #self.all_pieces.append(pieceE)
+        self.all_pieces.append(pieceE)
 
         p6a = [[0,1,0],[1,1,1]]
         p6b = [[1,0],[1,1],[1,0]]
         p6c = [[1,1,1],[0,1,0]]
         p6d = [[0,1],[1,1],[0,1]]
         pieceF = [p6a, p6b, p6c, p6d]
-        #self.all_pieces.append(pieceF)
+        self.all_pieces.append(pieceF)
 
         p7a = [[1,1,0],[0,1,1]]
         p7b = [[1,0],[1,1],[0,1]]
         pieceG = [p7a, p7b]
-        #self.all_pieces.append(pieceG)
+        self.all_pieces.append(pieceG)
 
 
     def getNewRandomPiece(self):
@@ -166,16 +166,8 @@ class Tetris:
 
     def putCurrentPieceInScreem(self):
         height_current_piece = len(self.current_piece[self.getPieceRotation()])
-        #print("==============")
-        #print("Pieza: ", self.current_piece[self.getPieceRotation()])
-        #print("Total manaño: ", height_current_piece)
-
-        # Don´t Exist pices
-        #if height_current_piece == 1:
-        #    print("Tipo 1")
 
         if height_current_piece == 2:
-            print("Tipo 2")
             _x = self.current_piece_pos_x
             _y = self.current_piece_pos_y
             for i in self.current_piece[self.getPieceRotation()]:
@@ -186,7 +178,6 @@ class Tetris:
                 _y = _y + 1
 
         if height_current_piece == 3:
-            print("Tipo 3")
             _x = self.current_piece_pos_x
             _y = self.current_piece_pos_y
             for i in self.current_piece[self.getPieceRotation()]:
@@ -197,30 +188,23 @@ class Tetris:
                 _y = _y + 1
 
         if height_current_piece == 4:
-            print("Estoy acaaaaaaa")
             if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
-                print("****")
-                # Hable to paint=
                 _x = self.current_piece_pos_x
                 _y = self.current_piece_pos_y
                 for i in self.current_piece[self.getPieceRotation()]:
-                    self.board[_y][_x] = i
+                    self.board[_y][_x] = 1
                     _x = _x + 1
             else:
-                print("*\n*\n*\n*\n*")
-                # hable To Paint?
-
                 _x = self.current_piece_pos_x
                 _y = self.current_piece_pos_y
                 for i in self.current_piece[self.getPieceRotation()]:
-                    self.board[_y][_x] = i
+                    self.board[_y][_x] = 1
                     _y = _y + 1
 
 
     def eraseCurrentPiece(self):
         count_x = 0
         count_y = 0
-        # Put case [[1][1][1][1]]
         # Put anothers cases
         for i in self.board:
             count_x = 0
@@ -309,48 +293,45 @@ class Tetris:
                 y0 = 50
                 if j == 0:
                     self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="snow", tag="board")
-                if j == 1 or j == 2:
+                if j == 1 or j == 2 or j == [1]:
                     self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="black", tag="board")
                 countx = countx + 1
 
 
     def paintMiniBoard(self):
-        if self.current_piece != self.miniBoardCurrentPiece:
+        countx = 0
+        county = 0
+        self.initMiniBoard()
+        self.canvas.delete("miniboard")
+        self._insertMiniPieceInMiniBoard()
+        for i in self.miniBoard:
             countx = 0
-            county = 0
-            self.initMiniBoard()
-            self.canvas.delete("miniboard")
-            self._insertMiniPieceInMiniBoard()
-            for i in self.miniBoard:
-                countx = 0
-                county = county + 1
-                for j in i:
-                    x0 = 360
-                    y0 = 200
-                    if j == 0:
-                        self.canvas.create_rectangle((x0+(countx*15)),(y0+(county*15)),(x0+((countx+1)*15)),(y0+((county+1)*15)), fill="snow", tag="miniboard")
-                    else:
-                        self.canvas.create_rectangle((x0+(countx*15)),(y0+(county*15)),(x0+((countx+1)*15)),(y0+((county+1)*15)), fill="black", tag="miniboard")
-                    countx = countx + 1
+            county = county + 1
+            for j in i:
+                x0 = 360
+                y0 = 200
+                if j == 0:
+                    self.canvas.create_rectangle((x0+(countx*15)),(y0+(county*15)),(x0+((countx+1)*15)),(y0+((county+1)*15)), fill="snow", tag="miniboard")
+                else:
+                    self.canvas.create_rectangle((x0+(countx*15)),(y0+(county*15)),(x0+((countx+1)*15)),(y0+((county+1)*15)), fill="black", tag="miniboard")
+                countx = countx + 1
 
 
     def _insertMiniPieceInMiniBoard(self):
-        if self.current_piece[0] == [1,1,1,1]:
-            _x = 0
-            for i in self.current_piece[0]:
-                self.miniBoard[0][_x] = i
-                _x = _x + 1
-        else:
-            _x = 1
-            _y = 0
-            for i in self.current_piece[0]:
+        len_piece = len(self.current_piece)
+        if len_piece > 0:
+            if self.current_piece[self.getPieceRotation()] == [1,1,1,1] or self.current_piece[self.getPieceRotation()] == [[1],[1],[1],[1]]:
+                for i in range(0, 4):
+                    self.miniBoard[0][i] = 1
+            else:
                 _x = 1
-                _y = _y + 1
-                for j in i:
-                    self.miniBoard[_y][_x] = j
-                    _x = _x + 1
-
-        self.miniBoardCurrentPiece = self.current_piece.copy()
+                _y = 0
+                for i in self.current_piece[0]:
+                    _x = 1
+                    _y = _y + 1
+                    for j in i:
+                        self.miniBoard[_y][_x] = j
+                        _x = _x + 1
 
 
 
