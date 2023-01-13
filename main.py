@@ -158,8 +158,12 @@ class Tetris:
         if total_piece_rotations > 0:
             next_rotate = self.current_piece[(self.current_piece_rotation + 1) % total_piece_rotations]
             
+            # Underflow 
             if next_rotate == [[1],[1],[1],[1]]:
                 return self.current_piece_pos_y + 3 < len(self.board)
+
+            if next_rotate == [1,1,1,1]:
+                return self.current_piece_pos_x + 3 < len(self.board[0])
 
             return True
         else:
@@ -246,6 +250,8 @@ class Tetris:
         if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
             len_pice = 1
         
+        print("Pos: ", str(self.current_piece_pos_y + len_pice), " de ", len(self.board))
+        print("State: ", self.current_piece_pos_y + len_pice == len(self.board))
         return self.current_piece_pos_y + len_pice == len(self.board)
 
     def putThePieceInFloor(self):
@@ -253,6 +259,12 @@ class Tetris:
         if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
             for i in range(0, 4):
                 self.board[self.current_piece_pos_y][self.current_piece_pos_x+i] = 2
+
+        if self.current_piece[self.getPieceRotation()] == [[1],[1],[1],[1]]:
+            for i in range(0, 4):
+                self.board[self.current_piece_pos_y+i][self.current_piece_pos_x] = 2
+
+        
 
     def mouvePieceR(self):
         if self.canMouveR():
