@@ -241,15 +241,16 @@ class Tetris:
 
     def thePieceTouchFloor(self):
         # Put the case ****
+        len_pice = len(self.current_piece[self.getPieceRotation()])
+
         if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
-            return self.current_piece_pos_y == len(self.board)
-        else:
-            len_pice = len(self.current_piece[self.getPieceRotation()])
-        return self.current_piece_pos_y + len_pice > len(self.board)
+            len_pice = 1
+        
+        return self.current_piece_pos_y + len_pice == len(self.board)
 
     def putThePieceInFloor(self):
         # Put the cases 
-        pass
+        print("Poner en el suelo")
 
     def mouvePieceR(self):
         if self.canMouveR():
@@ -386,9 +387,7 @@ class Tetris:
                 time.sleep(0.25)
                 self.eraseCurrentPiece()
                 self.applyGravity()
-                if self.thePieceTouchFloor():
-                    self.putThePieceInFloor()
-                    self.restartCurrentPiece()
+                print("Suelo...", self.thePieceTouchFloor())
 
 
             time.sleep(0.1)
