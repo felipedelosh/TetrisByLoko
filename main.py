@@ -250,7 +250,9 @@ class Tetris:
 
     def putThePieceInFloor(self):
         # Put the cases 
-        print("Poner en el suelo")
+        if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+            for i in range(0, 4):
+                self.board[self.current_piece_pos_y][self.current_piece_pos_x+i] = 2
 
     def mouvePieceR(self):
         if self.canMouveR():
@@ -305,8 +307,11 @@ class Tetris:
                 y0 = 50
                 if j == 0:
                     self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="snow", tag="board")
-                if j == 1 or j == 2 or j == [1]:
+                if j == 1 or j == [1]:
                     self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="black", tag="board")
+                if j == 2:
+                    self.canvas.create_rectangle((x0+(countx*30)),(y0+(county*30)),(x0+((countx+1)*30)),(y0+((county+1)*30)), fill="gray", tag="board")
+                
                 countx = countx + 1
 
 
@@ -387,7 +392,9 @@ class Tetris:
                 time.sleep(0.25)
                 self.eraseCurrentPiece()
                 self.applyGravity()
-                print("Suelo...", self.thePieceTouchFloor())
+                if self.thePieceTouchFloor():
+                    self.putThePieceInFloor()
+                    self.restartCurrentPiece()
 
 
             time.sleep(0.1)
