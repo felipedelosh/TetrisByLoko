@@ -98,35 +98,35 @@ class Tetris:
         p2c = [[1,1,1],[0,0,1]]
         p2d = [[0,1],[0,1],[1,1]]
         pieceB = [p2a, p2b, p2c, p2d]
-        self.all_pieces.append(pieceB)
+        #self.all_pieces.append(pieceB)
 
         p3a = [[0,0,1],[1,1,1]]
         p3b = [[1,0],[1,0],[1,1]]
         p3c = [[1,1,1],[1,0,0]]
         p3d = [[1,1],[0,1],[0,1]]
         pieceC = [p3a, p3b, p3c, p3d]
-        self.all_pieces.append(pieceC)
+        #self.all_pieces.append(pieceC)
 
         p4a = [[1,1],[1,1]]
         pieceD = [p4a]
-        self.all_pieces.append(pieceD)
+        #self.all_pieces.append(pieceD)
 
         p5a = [[0,1,1],[1,1,0]]
         p5b = [[1,0],[1,1],[0,1]]
         pieceE = [p5a, p5b]
-        self.all_pieces.append(pieceE)
+        #self.all_pieces.append(pieceE)
 
         p6a = [[0,1,0],[1,1,1]]
         p6b = [[1,0],[1,1],[1,0]]
         p6c = [[1,1,1],[0,1,0]]
         p6d = [[0,1],[1,1],[0,1]]
         pieceF = [p6a, p6b, p6c, p6d]
-        self.all_pieces.append(pieceF)
+        #self.all_pieces.append(pieceF)
 
         p7a = [[1,1,0],[0,1,1]]
         p7b = [[1,0],[1,1],[0,1]]
         pieceG = [p7a, p7b]
-        self.all_pieces.append(pieceG)
+        #self.all_pieces.append(pieceG)
 
 
     def getNewRandomPiece(self):
@@ -145,14 +145,25 @@ class Tetris:
 
 
     def rotatePieceR(self):
-        # Add logic to rotate R and mouve r ****
         total_rotations = len(self.current_piece)
-        #print("Pieza total actual: ", self.current_piece)
-        #print("Horientacion actual:", self.getPieceRotation())
-        #print("Total piezas: ", total_rotations)
         #print("Rotando R...")
-        self.current_piece_rotation = (self.current_piece_rotation + 1) %  total_rotations
-        #print("Rotada a: ", self.getPieceRotation())
+        if self.canRotate(total_rotations):
+            self.current_piece_rotation = (self.current_piece_rotation + 1) %  total_rotations
+
+
+    def canRotate(self, total_piece_rotations):
+        """
+        Protect to underflow
+        """
+        if total_piece_rotations > 0:
+            next_rotate = self.current_piece[(self.current_piece_rotation + 1) % total_piece_rotations]
+            
+            if next_rotate == [[1],[1],[1],[1]]:
+                return self.current_piece_pos_y + 3 < len(self.board)
+
+            return True
+        else:
+            return False
 
 
     def rotatePieceL(self):
@@ -234,7 +245,7 @@ class Tetris:
             return self.current_piece_pos_y == len(self.board)
         else:
             len_pice = len(self.current_piece[self.getPieceRotation()])
-        return self.current_piece_pos_y + len_pice == len(self.board)
+        return self.current_piece_pos_y + len_pice > len(self.board)
 
     def putThePieceInFloor(self):
         # Put the cases 
@@ -352,6 +363,7 @@ class Tetris:
                 self.rotatePieceR()
 
         if Event.keysym == "r":
+            self.restartCurrentPiece()
             self.getNewRandomPiece()
 
         if self.mode_game == 0:
