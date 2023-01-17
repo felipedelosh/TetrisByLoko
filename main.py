@@ -332,7 +332,20 @@ class Tetris:
         if self.existsCurrentPiece():
             if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
                 len_piece_w = 4
-            else:
+
+                if self.current_piece_pos_x+4 < len(self.board[0]):
+                    return  self.board[self.current_piece_pos_y][self.current_piece_pos_x+4] != 2
+
+            if self.current_piece[self.getPieceRotation()] == [[1],[1],[1],[1]]:
+                if self.current_piece_pos_x+1 < len(self.board[0]):
+                    part_of_matrix = []
+                    for i in range(0, 4):
+                        part_of_matrix.append(self.board[self.current_piece_pos_y+i][self.current_piece_pos_x+1])
+
+                    return 2 not in part_of_matrix
+
+
+            
                 len_piece_w = len(self.current_piece[self.getPieceRotation()][0])
             return self.current_piece_pos_x + len_piece_w < len(self.board[0])
         else:
