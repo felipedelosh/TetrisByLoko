@@ -162,9 +162,20 @@ class Tetris:
             
             # Underflow 
             if next_rotate == [[1],[1],[1],[1]]:
+                part_of_matrix = []
+                for i in range(0, 4):
+                    part_of_matrix.append(self.board[self.current_piece_pos_y+i][self.current_piece_pos_x])
+
+                if 2 in part_of_matrix:
+                    return False
+
                 return self.current_piece_pos_y + 3 < len(self.board)
 
             if next_rotate == [1,1,1,1]:
+                part_of_matrix = self.board[self.current_piece_pos_y][self.current_piece_pos_x:self.current_piece_pos_x+4]
+                if 2 in part_of_matrix:
+                    return False
+
                 return self.current_piece_pos_x + 3 < len(self.board[0])
 
             return True
