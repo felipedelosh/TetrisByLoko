@@ -345,9 +345,24 @@ class Tetris:
 
 
     def canMouvePieceL(self):
-        
+        if self.existsCurrentPiece():
+            if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+                if self.current_piece_pos_x-1 > 0:
+                    return self.board[self.current_piece_pos_y][self.current_piece_pos_x-1] != 2
 
-        return self.current_piece_pos_x - 1 >= 0
+            if self.current_piece[self.getPieceRotation()] == [[1],[1],[1],[1]]:
+                if self.current_piece_pos_x-1 > 0:
+                    part_of_matrix = []
+                    for i in range(0, 4):
+                        part_of_matrix.append(self.board[self.current_piece_pos_y+i][self.current_piece_pos_x-1])
+
+                    return 2 not in part_of_matrix
+
+
+
+            return self.current_piece_pos_x - 1 >= 0
+        else:
+            return False
 
 
     def updateScore(self):
