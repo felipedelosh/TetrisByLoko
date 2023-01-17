@@ -24,12 +24,14 @@ class Tetris:
 
         #This is control game
         # 0: the game not run
+        # 1: The game is run
         self.mode_game = 0
 
         self.current_piece = []
         self.current_piece_pos_x = 3
         self.current_piece_pos_y = 0
         self.current_piece_rotation = 0
+        self.list_of_complete_rows = []
         self.all_pieces = []
         self.initPieces()
         self.board = [] # to paint a game 
@@ -178,6 +180,9 @@ class Tetris:
         self.current_piece_pos_y = 0
         self.current_piece = []
 
+    def existsCurrentPiece(self):
+        return self.current_piece != []
+
 
     def putCurrentPieceInScreem(self):
         height_current_piece = len(self.current_piece[self.getPieceRotation()])
@@ -242,17 +247,51 @@ class Tetris:
             len_pice = len(self.current_piece[self.getPieceRotation()])
             return self.current_piece_pos_y + len_pice < len(self.board)
 
+    def theRowIsComplete(self):
+        for i in self.board:
+            if 0 not in i:
+                return True
+
+        return False
+
+    def _eraseCompleteRow(self):
+        bonus_score = 0
+        count_y = 0
+        count_x = 0
+        for i in self.board:
+            count_x = 0
+            if 0 not in i:
+                bonus_score = bonus_score + 1
+                self.list_of_complete_rows.append(count_y)
+                for j in i:
+                    self.board[count_y][count_x] = 0 
+                    count_x = count_x + 1
+            count_y = count_y + 1
+
+        self.player_score = bonus_score * 100
+
+    def _applyGravityToCompleteRows(self):
+        self.tempBoard = []
+
+        # Logic to aplly gravity
+
+
+        self.list_of_complete_rows = []
 
     def thePieceTouchFloor(self):
         # Put the case ****
-        len_pice = len(self.current_piece[self.getPieceRotation()])
+        if self.existsCurrentPiece():
+            len_pice = len(self.current_piece[self.getPieceRotation()])
 
-        if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
-            len_pice = 1
-        
-        print("Pos: ", str(self.current_piece_pos_y + len_pice), " de ", len(self.board))
-        print("State: ", self.current_piece_pos_y + len_pice == len(self.board))
-        return self.current_piece_pos_y + len_pice == len(self.board)
+            if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+                len_pice = 1
+            
+            #print("Pos: ", str(self.current_piece_pos_y + len_pice), " de ", len(self.board))
+            #print("State: ", self.current_piece_pos_y + len_pice == len(self.board))
+            return self.current_piece_pos_y + len_pice == len(self.board)
+        else:
+            return False
+
 
     def putThePieceInFloor(self):
         # Put the cases 
@@ -264,7 +303,25 @@ class Tetris:
             for i in range(0, 4):
                 self.board[self.current_piece_pos_y+i][self.current_piece_pos_x] = 2
 
-        
+    def thePieceTouchAnotherPiece(self):
+        if self.current_piece_pos_y+1 < len(self.board):
+            if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+                current_ocupated_space = self.board[self.current_piece_pos_y+1][self.current_piece_pos_x:self.current_piece_pos_x+4]
+                return 2 in current_ocupated_space
+
+            if self.current_piece[self.getPieceRotation()] == [[1],[1],[1],[1]]:
+                current_ocupated_space = []
+                for i in range(0, 4):
+                    current_ocupated_space.append(self.board[self.current_piece_pos_y+i+1][self.current_piece_pos_x])
+                return 2 in current_ocupated_space
+
+            # Put Another cases
+            
+            return 2 in current_ocupated_space
+
+        return False
+
+
 
     def mouvePieceR(self):
         if self.canMouveR():
@@ -272,11 +329,14 @@ class Tetris:
 
 
     def canMouveR(self):
-        if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
-            len_piece_w = 4
+        if self.existsCurrentPiece():
+            if self.current_piece[self.getPieceRotation()] == [1,1,1,1]:
+                len_piece_w = 4
+            else:
+                len_piece_w = len(self.current_piece[self.getPieceRotation()][0])
+            return self.current_piece_pos_x + len_piece_w < len(self.board[0])
         else:
-            len_piece_w = len(self.current_piece[self.getPieceRotation()][0])
-        return self.current_piece_pos_x + len_piece_w < len(self.board[0])
+            return False
 
 
     def mouvePïeceL(self):
@@ -285,6 +345,8 @@ class Tetris:
 
 
     def canMouvePieceL(self):
+        
+
         return self.current_piece_pos_x - 1 >= 0
 
 
@@ -301,7 +363,7 @@ class Tetris:
 
 
     def showInitalAnimation(self):
-        self.lbl_main_message_start_game.place(x=100, y=300)
+        self.lbl_main_message_start_game.place(x=80, y=300)
         time.sleep(0.2)
         self.lbl_main_message_start_game.place_forget()
         time.sleep(0.2)
@@ -362,6 +424,11 @@ class Tetris:
                         self.miniBoard[_y][_x] = j
                         _x = _x + 1
 
+    def _printTheBoard(self):
+        for i in self.board:
+            print(i)
+        print("=============")
+
 
 
     def keyPressed(self, Event):
@@ -384,10 +451,11 @@ class Tetris:
             self.restartCurrentPiece()
             self.getNewRandomPiece()
 
+        if Event.keysym == "p":
+            print("Pause")
+
         if self.mode_game == 0:
                 self.mode_game = 1
-
-        #print(Event.keysym)
 
 
     def run(self):
@@ -396,18 +464,23 @@ class Tetris:
                 self.showInitalAnimation()
 
             if self.mode_game == 1:
-                # Get rnd piece if not use
-                if self.current_piece == []:
-                    self.getNewRandomPiece()
-                # Put Pïece in Screem
-                self.putCurrentPieceInScreem()
-                time.sleep(0.25)
-                self.eraseCurrentPiece()
-                self.applyGravity()
-                if self.thePieceTouchFloor():
-                    self.putThePieceInFloor()
-                    self.restartCurrentPiece()
+                # complete row?
+                if self.theRowIsComplete():
+                    self._eraseCompleteRow()
+                    self._applyGravityToCompleteRows()
+                else:
+                    # Get rnd piece if not use
+                    if self.current_piece == []:
+                        self.getNewRandomPiece()
+                    # Put Pïece in Screem
+                    self.putCurrentPieceInScreem()
+                    time.sleep(0.25)
+                    self.eraseCurrentPiece()
+                    self.applyGravity()
 
+                    if self.thePieceTouchFloor() or self.thePieceTouchAnotherPiece():
+                        self.putThePieceInFloor()
+                        self.restartCurrentPiece()
 
             time.sleep(0.1)
             
